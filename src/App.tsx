@@ -1,49 +1,81 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
-import { Form } from 'semantic-ui-react';
+import { useState } from "react";
+import { Form, Table } from "semantic-ui-react";
 import { Temporal } from "@js-temporal/polyfill";
-import './App.css'
+import "./App.css";
+
+const formatDateObj = (date: string | undefined) => {
+  if (date) {
+    // date = date.replace(/-/g, "/");
+    const originalDate = new Date(date);
+    return (
+      <h1>
+        {`${originalDate.getMonth() + 1}/${originalDate.getDate()}/${originalDate.getFullYear()}`}
+      </h1>
+    );
+  }
+};
+
+const formatTemporal = (date: string | undefined) => {
+  if (date) {
+    const originalDate = Temporal.PlainDate.from(date);
+    return <h1>{originalDate.toLocaleString()}</h1>;
+  }
+}
 
 function App() {
-  const [date, setDate] = useState<undefined | string>();
-  const isoDate = date ? new Date(date).toISOString() : ""
-  const displayDate = new Date(isoDate).toDateString();
-
-  const [temporal, setTemporal] = useState<undefined | string>();
-  const temporalDate = temporal ? Temporal.PlainDate.from(temporal) : "";
-  const temporalDisplayDate = temporalDate.toString();
+  const [date, setDate] = useState<string | undefined>("");
+  const [temporal, setTemporal] = useState<string | undefined>("");
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <Form.Group>
-        <Form.Input
-          type="date"
-          label="Start Date"
-          placeholder="Start Date"
-          value={date}
-          onChange={(_, { value }) => setDate(value)}
-        />
-        <h1>{displayDate}</h1>
-        <Form.Input
-          type="date"
-          label="Start Date"
-          placeholder="Start Date"
-          value={temporal}
-          onChange={(_, { value }) => setTemporal(value)}
-        />
-        <h1>{temporalDisplayDate}</h1>
-      </Form.Group>
+      <Table celled padded definition>
+        <Table.Header>
+          <Table.Row>
+            <Table.HeaderCell/>
+            <Table.HeaderCell>Date Obj</Table.HeaderCell>
+            <Table.HeaderCell>Temporal</Table.HeaderCell>
+          </Table.Row>
+        </Table.Header>
+
+        <Table.Body>
+          <Table.Row>
+            <Table.Cell>
+              Enter a date
+            </Table.Cell>
+            <Table.Cell>
+              <Form>
+                <Form.Input
+                  type="date"
+                  label="Date Object"
+                  value={date}
+                  onChange={(_, { value }) => {
+                    setDate(value);
+                  }}
+                />
+              </Form>
+            </Table.Cell>
+            <Table.Cell>
+              <Form>
+                <Form.Input
+                  type="date"
+                  label="Temporal Date"
+                  value={temporal}
+                  onChange={(_, { value }) => {
+                    setTemporal(value);
+                  }}
+                />
+              </Form>
+            </Table.Cell>
+          </Table.Row>
+
+          <Table.Row>
+            <Table.Cell>Formatted Date</Table.Cell>
+            <Table.Cell>{formatDateObj(date)}</Table.Cell>
+            <Table.Cell>{formatTemporal(temporal)}</Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table>
     </>
   );
 }
 
-export default App
+export default App;
